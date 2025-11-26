@@ -1,6 +1,6 @@
 /**
  * CALENDÁRIO DE PUBLICAÇÕES + CMS
- * Versão: Final Integrada (CP 103, 113, 137, 139 + Fases + Gerador HTML)
+ * Versão: Completa com CP 139 e Correção de Cache
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. ESTADO DA APLICAÇÃO E DOM
     // ============================================================================
     const AppState = {
-        currentDate: new Date(), 
+        currentDate: new Date(), // Inicia na data de hoje
         selectedChamadaId: "all",
         selectedTipo: "all",
         selectedDate: Utils.formatDateISO(new Date())
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chamadaSelect: document.getElementById('chamada-select'),
         tipoSelect: document.getElementById('tipo-select'),
         notificationBell: document.getElementById('notification-bell'),
+        btnPrint: document.getElementById('print-btn'),
         // Calendário
         currentMonthYear: document.getElementById('current-month-year'),
         calendarWeekdays: document.getElementById('calendar-weekdays'),
@@ -80,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ============================================================================
-    // 3. DADOS PADRÃO (SEED)
+    // 3. DADOS PADRÃO (SEED) - Incluindo CP 139
     // ============================================================================
     const defaultData = [
         {
@@ -144,38 +145,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: "cp113_18", data: "2025-11-11", tipo: "FINAL", titulo: "Resultado Final Definitivo", comunicadoNum: "255/2025", linkPDF: "https://www.uece.br/sate/wp-content/uploads/sites/58/2025/11/CP113.25-Resultado-Final-Definitivo.pdf" }
             ]
         },
-        // --- NOVA CP 137/2025 ---
+        // --- CP 137/2025 ---
         {
             id: "cp_137_2025",
             nome: "CHAMADA PÚBLICA Nº 137/2025",
             nomeCurto: "CP 137/2025",
-            cssClass: "dot-cp-137",
+            cssClass: "dot-cp-137", // Laranja (requer CSS)
+            linkEdital: "https://www.uece.br/sate/wp-content/uploads/sites/58/2025/11/CP137.25-Edital.pdf",
+            linkRecursoForm: "https://www.uece.br/sate/",
+            proposito: "seleção de PROFESSORES FORMADORES e PROFESSORES ORIENTADORES DE TCC para cursos de especialização do Sistema UAB na UECE.",
+            eventos: [
+                { id: "cp137_1", data: "2025-11-17", tipo: "INSCRICAO", titulo: "Início - Período de Inscrição", linkForm: "http://www.uece.br/sate" },
+                { id: "cp137_2", data: "2025-12-05", tipo: "INSCRICAO", titulo: "Término - Período de Inscrição" },
+                { id: "cp137_3", data: "2025-12-08", tipo: "INSCRICAO", titulo: "Resultado preliminar das inscrições" },
+                { id: "cp137_4", data: "2025-12-09", tipo: "INSCRICAO", titulo: "Recurso ao Resultado preliminar das inscrições" },
+                { id: "cp137_5", data: "2025-12-11", tipo: "INSCRICAO", titulo: "Resultado final das inscrições" },
+                { id: "cp137_6", data: "2025-12-12", tipo: "ANALISE_CURRICULO", titulo: "Início - Análise de currículos" },
+                { id: "cp137_7", data: "2025-12-17", tipo: "ANALISE_CURRICULO", titulo: "Término - Análise de currículos" },
+                { id: "cp137_8", data: "2025-12-18", tipo: "ANALISE_CURRICULO", titulo: "Resultado preliminar da análise de currículo - 1ª etapa" },
+                { id: "cp137_9", data: "2025-12-19", tipo: "ANALISE_CURRICULO", titulo: "Recurso ao Resultado preliminar da análise de currículo" },
+                { id: "cp137_10", data: "2025-12-22", tipo: "ANALISE_CURRICULO", titulo: "Resultado final da análise de currículo e convocação para entrevista" },
+                { id: "cp137_11", data: "2025-12-29", tipo: "ENTREVISTA", titulo: "Início - Realização das entrevistas (2ª etapa)" },
+                { id: "cp137_12", data: "2025-12-31", tipo: "ENTREVISTA", titulo: "Término - Realização das entrevistas (2ª etapa)" },
+                { id: "cp137_13", data: "2026-01-05", tipo: "ENTREVISTA", titulo: "Resultado preliminar das entrevistas - 2ª etapa" },
+                { id: "cp137_14", data: "2026-01-06", tipo: "ENTREVISTA", titulo: "Recurso ao Resultado preliminar das entrevistas" },
+                { id: "cp137_15", data: "2026-01-07", tipo: "ENTREVISTA", titulo: "Resultado final das entrevistas e convocação para Curso de Formação" },
+                { id: "cp137_16", data: "2026-01-09", tipo: "CURSO_FORMACAO", titulo: "Início - Curso de formação em EaD (3ª etapa)" },
+                { id: "cp137_17", data: "2026-01-16", tipo: "CURSO_FORMACAO", titulo: "Término - Curso de formação em EaD (3ª etapa)" },
+                { id: "cp137_18", data: "2026-01-19", tipo: "CURSO_FORMACAO", titulo: "Resultado preliminar do Curso de Formação" },
+                { id: "cp137_19", data: "2026-01-20", tipo: "CURSO_FORMACAO", titulo: "Recurso ao Resultado preliminar do Curso de Formação" },
+                { id: "cp137_20", data: "2026-01-21", tipo: "CURSO_FORMACAO", titulo: "Resultado final do curso de Formação" },
+                { id: "cp137_21", data: "2026-01-22", tipo: "FINAL", titulo: "Publicação do Resultado Final Preliminar" },
+                { id: "cp137_22", data: "2026-01-23", tipo: "FINAL", titulo: "Recurso ao Resultado Final Preliminar" },
+                { id: "cp137_23", data: "2026-01-27", tipo: "FINAL", titulo: "Publicação do Resultado Final Definitivo" }
+            ]
+        },
+        // --- NOVA CP 139/2025 ---
+        {
+            id: "cp_139_2025",
+            nome: "CHAMADA PÚBLICA Nº 139/2025",
+            nomeCurto: "CP 139/2025",
+            cssClass: "dot-cp-103", // Usando azul, pois não definimos cor específica para 139
             linkEdital: "https://www.uece.br/sate/wp-content/uploads/sites/58/2025/11/CP139.25-Edital.pdf",
             linkRecursoForm: "https://forms.gle/bNbxdTg53ynoG2xK7",
-            proposito: "seleção de ASSISTENTES PEDAGÓGICOS para atuar no Sistema UAB/UECE.",
+            proposito: "seleção de ASSISTENTES PEDAGÓGICOS para atuar no Sistema UNIVERSIDADE ABERTA DO BRASIL (UAB) NA UECE.",
             eventos: [
-                { id: "cp137_1", data: "2025-12-01", tipo: "INSCRICAO", titulo: "Início - Período de Inscrição", linkForm: "https://forms.gle/bNbxdTg53ynoG2xK7" },
-                { id: "cp137_2", data: "2025-12-15", tipo: "INSCRICAO", titulo: "Término - Período de Inscrição" },
-                { id: "cp137_3", data: "2025-12-16", tipo: "INSCRICAO", titulo: "Resultado preliminar das inscrições" },
-                { id: "cp137_4", data: "2025-12-17", tipo: "INSCRICAO", titulo: "Recurso ao indeferimento de inscrição" },
-                { id: "cp137_5", data: "2025-12-18", tipo: "INSCRICAO", titulo: "Resultado final das inscrições" },
+                { id: "cp139_1", data: "2025-12-01", tipo: "INSCRICAO", titulo: "Início - Publicação e recebimento de inscrições", linkForm: "https://forms.gle/bNbxdTg53ynoG2xK7" },
+                { id: "cp139_2", data: "2025-12-15", tipo: "INSCRICAO", titulo: "Término - Publicação e recebimento de inscrições" },
+                { id: "cp139_3", data: "2025-12-16", tipo: "INSCRICAO", titulo: "Divulgação das inscrições homologadas" },
+                { id: "cp139_4", data: "2025-12-17", tipo: "INSCRICAO", titulo: "Recurso referente a homologação das inscrições" },
+                { id: "cp139_5", data: "2025-12-18", tipo: "INSCRICAO", titulo: "Divulgação do resultado final das inscrições homologadas" },
                 
-                { id: "cp137_6", data: "2025-12-19", tipo: "ANALISE_CURRICULO", titulo: "Início - Análise de currículos" },
-                { id: "cp137_7", data: "2025-12-23", tipo: "ANALISE_CURRICULO", titulo: "Término - Análise de currículos" },
-                { id: "cp137_8", data: "2026-01-05", tipo: "ANALISE_CURRICULO", titulo: "Resultado preliminar da análise de currículo" },
-                { id: "cp137_9", data: "2026-01-06", tipo: "ANALISE_CURRICULO", titulo: "Recurso ao Resultado preliminar da análise de currículo" },
-                { id: "cp137_10", data: "2026-01-07", tipo: "ANALISE_CURRICULO", titulo: "Resultado final da análise de currículo e convocação" },
+                { id: "cp139_6", data: "2025-12-19", tipo: "ANALISE_CURRICULO", titulo: "Início - Período de análise dos currículos" },
+                { id: "cp139_7", data: "2025-12-23", tipo: "ANALISE_CURRICULO", titulo: "Término - Período de análise dos currículos" },
+                { id: "cp139_8", data: "2026-01-05", tipo: "ANALISE_CURRICULO", titulo: "Divulgação dos resultados de Análise dos Currículos" },
+                { id: "cp139_9", data: "2026-01-06", tipo: "ANALISE_CURRICULO", titulo: "Recurso referente ao Resultado da Análise do Currículo" },
+                { id: "cp139_10", data: "2026-01-07", tipo: "ANALISE_CURRICULO", titulo: "Divulgação da Análise dos Recursos e relação final para Entrevista" },
                 
-                { id: "cp137_11", data: "2026-01-08", tipo: "ENTREVISTA", titulo: "Início - Realização das entrevistas" },
-                { id: "cp137_12", data: "2026-01-13", tipo: "ENTREVISTA", titulo: "Término - Realização das entrevistas" },
-                { id: "cp137_13", data: "2026-01-14", tipo: "ENTREVISTA", titulo: "Resultado preliminar das entrevistas" },
-                { id: "cp137_14", data: "2026-01-15", tipo: "ENTREVISTA", titulo: "Recurso ao Resultado preliminar das entrevistas" },
-                { id: "cp137_15", data: "2026-01-16", tipo: "ENTREVISTA", titulo: "Resultado final das entrevistas" },
+                { id: "cp139_11", data: "2026-01-08", tipo: "ENTREVISTA", titulo: "Início - Realização das entrevistas" },
+                { id: "cp139_12", data: "2026-01-13", tipo: "ENTREVISTA", titulo: "Término - Realização das entrevistas" },
+                { id: "cp139_13", data: "2026-01-14", tipo: "ENTREVISTA", titulo: "Divulgação do resultado das Entrevistas" },
+                { id: "cp139_14", data: "2026-01-15", tipo: "ENTREVISTA", titulo: "Recurso referente ao Resultado da Entrevista" },
+                { id: "cp139_15", data: "2026-01-16", tipo: "ENTREVISTA", titulo: "Divulgação da Análise dos Recursos e relação final dos aprovados" },
                 
-                { id: "cp137_16", data: "2026-01-19", tipo: "FINAL", titulo: "Divulgação da Nota Final" },
-                { id: "cp137_17", data: "2026-01-20", tipo: "FINAL", titulo: "Recurso ao Resultado da nota final" },
-                { id: "cp137_18", data: "2026-01-22", tipo: "FINAL", titulo: "Publicação de Resultado Final Definitivo" },
-                { id: "cp137_19", data: "2026-01-26", tipo: "DEFAULT", titulo: "Início do chamamento dos candidatos" }
+                { id: "cp139_16", data: "2026-01-19", tipo: "FINAL", titulo: "Divulgação da Nota Final obtida por cada candidato" },
+                { id: "cp139_17", data: "2026-01-20", tipo: "FINAL", titulo: "Início - Recurso referente ao Resultado da nota final" },
+                { id: "cp139_18", data: "2026-01-21", tipo: "FINAL", titulo: "Término - Recurso referente ao Resultado da nota final" },
+                { id: "cp139_19", data: "2026-01-22", tipo: "FINAL", titulo: "Publicação de Resultado Final Definitivo" },
+                { id: "cp139_20", data: "2026-01-26", tipo: "DEFAULT", titulo: "Início do chamamento dos candidatos para assumir a bolsa" }
             ]
         }
     ];
@@ -188,6 +225,21 @@ document.addEventListener('DOMContentLoaded', () => {
         init: () => {
             if (!localStorage.getItem(DataModule.KEY)) {
                 localStorage.setItem(DataModule.KEY, JSON.stringify(defaultData));
+            } else {
+                // ** AUTO-UPDATE (Para garantir que a CP 139 apareça) **
+                // Verifica se a CP 139 já existe no storage
+                const currentData = JSON.parse(localStorage.getItem(DataModule.KEY));
+                const hasCP139 = currentData.some(c => c.id === 'cp_139_2025');
+                
+                if (!hasCP139) {
+                    console.log("Atualizando dados: Adicionando CP 139...");
+                    // Encontra a CP 139 no defaultData
+                    const cp139 = defaultData.find(c => c.id === 'cp_139_2025');
+                    if (cp139) {
+                        currentData.push(cp139);
+                        localStorage.setItem(DataModule.KEY, JSON.stringify(currentData));
+                    }
+                }
             }
         },
         load: () => JSON.parse(localStorage.getItem(DataModule.KEY) || "[]"),
@@ -196,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.dispatchEvent(new CustomEvent('dataUpdated'));
         },
         reset: () => {
-            if(confirm("ATENÇÃO: Isso apagará todas as alterações e restaurará os dados padrão (CP 103, 113 e 137). Continuar?")) {
+            if(confirm("ATENÇÃO: Isso apagará todas as alterações e restaurará os dados padrão (CP 103, 113, 137 e 139). Continuar?")) {
                 localStorage.setItem(DataModule.KEY, JSON.stringify(defaultData));
                 document.dispatchEvent(new CustomEvent('dataUpdated'));
                 alert("Dados restaurados.");
@@ -226,8 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     select.classList.toggle('open');
                 });
 
-                const currentOptions = wrapper.querySelectorAll('.custom-option');
-                currentOptions.forEach(option => {
+                options.forEach(option => {
                     const newOption = option.cloneNode(true);
                     option.parentNode.replaceChild(newOption, option);
                     
@@ -517,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const tLower = titulo.toLowerCase();
 
-            if (tLower.includes('resultado') || tLower.includes('convocação')) {
+            if (tLower.includes('resultado') || tLower.includes('convocação') || tLower.includes('publicação')) {
                 if (tLower.includes('preliminar')) {
                     body = `
 <p style="text-align: justify">Informamos no Anexo único o ${titulo.toLowerCase()} para a ${nome}, ${proposito}</p>
@@ -535,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <p style="text-align: justify">Informamos que está aberto o período para ${titulo.toLowerCase()} referente à ${nome}.</p>
 <p><strong>DOS RECURSOS:</strong><br />Os recursos serão feitos mediante ao envio do formulário <a href="${linkRecursoForm || '#'}">${linkRecursoForm || '#'}</a> no dia ${dataHoje}.</p>`;
             }
-            else if (tLower.includes('início') || tLower.includes('publicação') || tLower.includes('abertura')) {
+            else if (tLower.includes('início') || tLower.includes('abertura')) {
                 if (tipo === 'INSCRICAO') {
                     body = `
 <p style="text-align: justify">A coordenação da SATE/UAB/UECE publica o edital para a ${nome.toUpperCase()} de ${proposito}</p>
@@ -589,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const dayEvs = evs.filter(e => e.data === dISO);
                 if(dayEvs.length > 0) {
-                    // Filtra recursos dos dots
+                    // Filtra recursos dos dots (opcional)
                     const relevantEvs = dayEvs.filter(e => !e.titulo.toLowerCase().includes('recurso'));
                     if(relevantEvs.length > 0) {
                         const ul = document.createElement('ul'); ul.className = 'event-indicator';
@@ -681,7 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.chamadaSelect.addEventListener('change', (e) => { AppState.selectedChamadaId = e.target.value; updateViews(); });
     DOM.tipoSelect.addEventListener('change', (e) => { AppState.selectedTipo = e.target.value; updateViews(); });
     
-    // Print Button Listener
     DOM.btnPrint.addEventListener('click', () => {
         window.print();
     });
