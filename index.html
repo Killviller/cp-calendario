@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Publicações</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header class="app-header">
+            
+            <div class="header-top">
+                <div class="brand">
+                    <h1>
+                        <i class="fa-solid fa-calendar-check"></i> Painel de Publicações
+                        <span id="notification-bell" style="display: none;" title="Postagens pendentes para hoje!">🔔</span>
+                    </h1>
+                    <p class="subtitle">Gerenciamento de Editais e Cronogramas</p>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button id="print-btn" class="admin-btn" title="Imprimir Cronograma">
+                        <i class="fa-solid fa-print"></i> Imprimir
+                    </button>
+                    
+                    <button id="admin-btn" class="admin-btn" title="Abrir Painel Administrativo">
+                        <i class="fa-solid fa-gear"></i> Administração
+                    </button>
+                </div>
+            </div>
+            
+            <div class="header-toolbar">
+                
+                <div class="filter-group">
+                    <label><i class="fa-solid fa-filter"></i> Chamada:</label>
+                    <div class="custom-select-wrapper" id="chamada-select-wrapper">
+                        <div class="custom-select">
+                            <div class="custom-select-trigger">
+                                <span>-- Todas as Chamadas --</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options">
+                                <span class="custom-option selected" data-value="all">-- Todas as Chamadas --</span>
+                                </div>
+                        </div>
+                        <select id="chamada-select" style="display: none;">
+                            <option value="all">-- Todas as Chamadas --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label><i class="fa-solid fa-tag"></i> Fase:</label>
+                    <div class="custom-select-wrapper" id="tipo-select-wrapper">
+                        <div class="custom-select">
+                            <div class="custom-select-trigger">
+                                <span>-- Todas as Fases --</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options">
+                                <span class="custom-option selected" data-value="all">-- Todas as Fases --</span>
+                                <span class="custom-option" data-value="INSCRICAO">Inscrição</span>
+                                <span class="custom-option" data-value="ANALISE_CURRICULO">Análise de Currículo</span>
+                                <span class="custom-option" data-value="ENTREVISTA">Entrevista</span>
+                                <span class="custom-option" data-value="CURSO_FORMACAO">Curso de Formação</span>
+                                <span class="custom-option" data-value="FINAL">Resultado Final</span>
+                            </div>
+                        </div>
+                        <select id="tipo-select" style="display: none;">
+                            <option value="all">-- Todas as Fases --</option>
+                            <option value="INSCRICAO">Inscrição</option>
+                            <option value="ANALISE_CURRICULO">Análise de Currículo</option>
+                            <option value="ENTREVISTA">Entrevista</option>
+                            <option value="CURSO_FORMACAO">Curso de Formação</option>
+                            <option value="FINAL">Resultado Final</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <section class="calendar-container">
+                <div class="calendar-header">
+                    <div class="month-nav">
+                        <button id="prev-month" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                        <h2 id="current-month-year"></h2>
+                        <button id="next-month" class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="view-toggle">
+                        <button id="view-btn-month" class="active" title="Visão em Mês">Mês</button>
+                        <button id="view-btn-agenda" title="Visão em Agenda">Agenda</button>
+                    </div>
+                </div>
+                
+                <div id="calendar-weekdays" class="calendar-weekdays">
+                    <div>Dom</div>
+                    <div>Seg</div>
+                    <div>Ter</div>
+                    <div>Qua</div>
+                    <div>Qui</div>
+                    <div>Sex</div>
+                    <div>Sáb</div>
+                </div>
+                
+                <div id="calendar-grid" class="calendar-grid">
+                    </div>
+
+                <div id="agenda-view" class="agenda-view" style="display: none;">
+                    </div>
+            </section>
+
+            <section id="details-container" class="details-container">
+                <div class="details-header">
+                    <h3>Detalhes do Dia</h3>
+                    <h4 id="selected-date-display">Selecione um dia</h4>
+                </div>
+                <div class="details-body">
+                    <ul id="event-list">
+                        </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="text-generator-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content modal-xl">
+            <button id="close-modal" class="modal-close-btn">&times;</button>
+            <h3>Texto para Postagem</h3>
+            <p id="modal-event-title"></p>
+            <textarea id="generated-text" rows="15" readonly></textarea>
+            <button id="copy-text-btn" class="action-btn">
+                <i class="fa-solid fa-copy"></i> Copiar Texto
+            </button>
+        </div>
+    </div>
+
+    <div id="admin-list-modal" class="modal-overlay" style="display: none; z-index: 2001;">
+        <div class="modal-content modal-lg">
+            <button class="modal-close-btn close-admin-modal">&times;</button>
+            <h3>Gerenciar Chamadas Públicas</h3>
+            <div class="admin-actions">
+                <button id="btn-new-chamada" class="action-btn btn-success"><i class="fa-solid fa-plus"></i> Nova Chamada</button>
+                <button id="btn-reset-data" class="action-btn btn-danger" style="width: auto; margin-left: auto;"><i class="fa-solid fa-rotate-right"></i> Resetar Padrão</button>
+            </div>
+            <ul id="admin-chamada-list" class="admin-list">
+                </ul>
+        </div>
+    </div>
+
+    <div id="admin-chamada-form-modal" class="modal-overlay" style="display: none; z-index: 2002;">
+        <div class="modal-content">
+            <button class="modal-close-btn close-form-modal">&times;</button>
+            <h3 id="chamada-form-title">Nova Chamada</h3>
+            <form id="chamada-form">
+                <input type="hidden" id="chamada-id">
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="chamada-nome" required placeholder="Ex: CHAMADA PÚBLICA Nº 137/2025">
+                </div>
+                <div class="form-group">
+                    <label>Nome Curto (Calendário):</label>
+                    <input type="text" id="chamada-curto" required placeholder="Ex: CP 137/2025">
+                </div>
+                <div class="form-group">
+                    <label>Propósito (Resumo):</label>
+                    <textarea id="chamada-proposito" rows="2" placeholder="Ex: seleção de professores..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link do Edital:</label>
+                    <input type="url" id="chamada-link-edital" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Link Padrão de Recurso (Formulário):</label>
+                    <input type="url" id="chamada-link-recurso" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Cor do Indicador:</label>
+                    <select id="chamada-css">
+                        <option value="dot-cp-103">Azul (Padrão 1)</option>
+                        <option value="dot-cp-113">Verde (Padrão 2)</option>
+                        <option value="dot-cp-137">Laranja (Padrão 3)</option>
+                        <option value="dot-cp-default">Cinza (Padrão 4)</option>
+                    </select>
+                </div>
+                <button type="submit" class="action-btn">Salvar Chamada</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-events-list-modal" class="modal-overlay" style="display: none; z-index: 2003;">
+        <div class="modal-content modal-lg">
+            <button class="modal-close-btn close-events-modal">&times;</button>
+            <h3>Gerenciar Eventos: <span id="events-manager-title" style="font-size: 0.8em; color: var(--color-secondary);"></span></h3>
+            <div class="admin-actions">
+                <button id="btn-new-event" class="action-btn btn-success"><i class="fa-solid fa-plus"></i> Novo Evento</button>
+                <button class="action-btn btn-secondary close-events-modal" style="width: auto; margin-left: auto;">Voltar</button>
+            </div>
+            <ul id="admin-event-list" class="admin-list">
+                </ul>
+        </div>
+    </div>
+
+    <div id="admin-event-form-modal" class="modal-overlay" style="display: none; z-index: 2004;">
+        <div class="modal-content">
+            <button class="modal-close-btn close-event-form-modal">&times;</button>
+            <h3 id="event-form-title">Novo Evento</h3>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label>Título do Evento:</label>
+                    <input type="text" id="event-titulo" required placeholder="Ex: Resultado Final Preliminar">
+                </div>
+                <div class="form-group">
+                    <label>Data:</label>
+                    <input type="date" id="event-data" required>
+                </div>
+                <div class="form-group">
+                    <label>Fase do Processo:</label>
+                    <select id="event-tipo" required>
+                        <option value="INSCRICAO">Inscrição</option>
+                        <option value="ANALISE_CURRICULO">Análise de Currículo</option>
+                        <option value="ENTREVISTA">Entrevista</option>
+                        <option value="CURSO_FORMACAO">Curso de Formação</option>
+                        <option value="FINAL">Resultado Final</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Comunicado Nº (Opcional):</label>
+                    <input type="text" id="event-comunicado" placeholder="Ex: 254/2025">
+                </div>
+                <div class="form-group">
+                    <label>Link do PDF (Opcional):</label>
+                    <input type="url" id="event-link-pdf" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Link Específico (Formulário):</label>
+                    <input type="url" id="event-link-form" placeholder="https://...">
+                </div>
+                <button type="submit" class="action-btn">Salvar Evento</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
